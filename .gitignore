@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.env
+*.log
+.DS_Store
+coverage/
+.turbo/
+.next/
+*.tsbuildinfo
+backend/uploads/
+# tsc -b on tsconfig.node.json (composite project, required for project
+# references) emits compiled output next to vite.config.ts as a side
+# effect of typechecking it — these are build artifacts, not source.
+frontend/vite.config.js
+frontend/vite.config.d.ts

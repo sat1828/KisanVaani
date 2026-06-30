@@ -1,0 +1,80 @@
+version: '3.9'
+
+# Reads secrets from a .env file in this same directory (docker compose
+# automatically loads `.env` next to this file). Copy .env.example to
+# .env and fill in real values before running `docker compose up`.
+#
+# DB_PASSWORD has NO default here on purpose. The previous version of
+# this file had `${DB_PASSWORD:-kisanvaani_prod_2024}` — a guessable
+# hardcoded password baked into source control as the "production"
+# fallback. Compose's `${VAR:?message}` syntax below makes it a hard
+# failure to start without explicitly setting your own password.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kisanvaani-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: kisanvaani
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in your .env file before starting — no default is provided}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kisanvaani-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    # Pulls every other secret (ANTHROPIC_API_KEY, TWILIO_*, API_KEY,
+    # OPENWEATHER_API_KEY, MARKET_API_KEY, RESEND_API_KEY,
+    # CONTACT_NOTIFY_EMAIL, PUBLIC_BASE_URL, ALLOWED_IMAGE_HOSTS, etc)
+    # from backend/.env. The previous version of this file only ever set
+    # NODE_ENV and DATABASE_URL here, meaning every other integration
+    # silently had no credentials at all when run via docker compose.
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://postgres:${DB_PASSWORD:?Set DB_PASSWORD in your .env file}@postgres:5432/kisanvaani?schema=public"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kisanvaani-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  uploads_data:

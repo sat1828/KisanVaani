@@ -1,0 +1,28 @@
+{
+  "name": "kisanvaani",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Krishak Mitra - Multilingual Agri-Advisory Agent",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c cyan,green \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "setup": "npm install && npm --prefix backend install && npm --prefix backend run db:generate && npm --prefix frontend install",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "npm --prefix backend test",
+    "test:frontend": "npm --prefix frontend test",
+    "db:generate": "npm --prefix backend exec prisma generate",
+    "db:migrate": "npm --prefix backend exec prisma migrate deploy",
+    "db:seed": "npm --prefix backend exec ts-node prisma/seed.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

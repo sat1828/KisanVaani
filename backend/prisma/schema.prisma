@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FarmerProfile {
+  id                String   @id @default(cuid())
+  phoneNumber       String   @unique @map("phone_number")
+  name              String?
+  preferredLang     String?  @map("preferred_lang")
+  state             String?
+  district          String?
+  village           String?
+  lat               Float?
+  lon               Float?
+  primaryCrops      String[] @map("primary_crops")
+  landholdingAc     Float?   @map("landholding_ac")
+  soilType          String?  @map("soil_type")
+  irrigationType    String?  @map("irrigation_type")
+  lastInteraction   DateTime? @map("last_interaction")
+  queryCount        Int      @default(0) @map("query_count")
+  preferredChannel  String?  @map("preferred_channel")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  queries           QueryLog[]
+  weatherAlerts     WeatherAlert[]
+
+  @@map("farmer_profiles")
+}
+
+model QueryLog {
+  id            String   @id @default(cuid())
+  farmerId      String?  @map("farmer_id")
+  sessionId     String?  @map("session_id")
+  channel       String   @default("whatsapp")
+  inputType     String   @default("text") @map("input_type")
+  inputText     String?  @map("input_text")
+  inputMediaUrl String?  @map("input_media_url")
+  responseText  String   @map("response_text")
+  diagnosis     String?
+  confidence    Float?
+  treatment     String?
+  language      String   @default("hi")
+  latencyMs     Int?     @map("latency_ms")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  farmer        FarmerProfile? @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([createdAt])
+  @@map("query_logs")
+}
+
+model DiseaseDB {
+  id              String   @id @default(cuid())
+  crop            String
+  name            String
+  localName       String?  @map("local_name")
+  scientificName  String?  @map("scientific_name")
+  symptoms        String[]
+  causes          String?
+  organicTreatment  String? @map("organic_treatment")
+  chemicalTreatment String? @map("chemical_treatment")
+  prevention      String?
+  confidenceScore Float?   @map("confidence_score")
+  seasonMonths    Int[]    @map("season_months")
+  regions         String[]
+  imageUrl        String?  @map("image_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([crop])
+  @@map("disease_db")
+}
+
+model WeatherAlert {
+  id          String   @id @default(cuid())
+  farmerId    String?  @map("farmer_id")
+  lat         Float
+  lon         Float
+  alertType   String   @map("alert_type")
+  message     String
+  severity    String   @default("info")
+  expiresAt   DateTime? @map("expires_at")
+  sentAt      DateTime? @map("sent_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  farmer      FarmerProfile? @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([createdAt])
+  @@map("weather_alerts")
+}
+
+model MarketPrice {
+  id          String   @id @default(cuid())
+  commodity   String
+  market      String
+  district    String?
+  state       String?
+  minPrice    Float    @map("min_price")
+  maxPrice    Float    @map("max_price")
+  modalPrice  Float    @map("modal_price")
+  unit        String   @default("quintal")
+  trend       String?  @default("stable")
+  fetchedAt   DateTime @default(now()) @map("fetched_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([commodity, market])
+  @@index([fetchedAt])
+  @@map("market_prices")
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  phoneNumber   String?  @map("phone_number")
+  channel       String   @default("whatsapp")
+  language      String   @default("hi")
+  context       Json?
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([phoneNumber])
+  @@map("sessions")
+}
+
+model ContactMessage {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  emailSent   Boolean  @default(false) @map("email_sent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("contact_messages")
+}
