@@ -1,0 +1,94 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <defs>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="50%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+    <linearGradient id="btn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <rect width="1200" height="760" fill="url(#hero)" opacity="0.6"/>
+
+  <!-- navbar -->
+  <rect width="1200" height="64" fill="#ffffff" fill-opacity="0.7"/>
+  <circle cx="40" cy="32" r="12" fill="#16a34a"/>
+  <text x="60" y="38" font-size="16" font-weight="700" fill="#14532d">KisanVaani</text>
+  <g font-size="13" fill="#374151">
+    <text x="420" y="38">Home</text>
+    <text x="490" y="38">Features</text>
+    <text x="580" y="38">Live Demo</text>
+    <text x="670" y="38">About</text>
+    <text x="730" y="38">Contact</text>
+  </g>
+  <circle cx="1140" cy="32" r="14" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="1000" y="18" width="110" height="28" rx="14" fill="url(#btn)"/>
+  <text x="1020" y="36" font-size="11" fill="#ffffff">Try Live Demo</text>
+
+  <!-- pill badge -->
+  <rect x="80" y="120" width="230" height="30" rx="15" fill="#ffffff" fill-opacity="0.6" stroke="#16a34a" stroke-opacity="0.3"/>
+  <text x="100" y="140" font-size="11" fill="#15803d" letter-spacing="1">V2.1 — PRODUCTION GRADE</text>
+
+  <!-- headline -->
+  <text x="78" y="210" font-size="44" font-weight="700" fill="#111827">Your Personal</text>
+  <text x="78" y="262" font-size="44" font-weight="700" fill="#16a34a">Agri-Advisor</text>
+  <text x="78" y="314" font-size="44" font-weight="700" fill="#111827">In Every Language</text>
+
+  <text x="80" y="356" font-size="16" fill="#4b5563">AI-powered crop disease diagnosis, weather advisory, and market</text>
+  <text x="80" y="378" font-size="16" fill="#4b5563">intelligence — available 24/7 on a basic phone in 12+ languages.</text>
+
+  <rect x="80" y="410" width="180" height="52" rx="14" fill="url(#btn)"/>
+  <text x="115" y="442" font-size="14" fill="#ffffff" font-weight="600">▶ Try Live Demo</text>
+  <rect x="276" y="410" width="160" height="52" rx="14" fill="#ffffff" fill-opacity="0.7" stroke="#d1d5db"/>
+  <text x="305" y="442" font-size="14" fill="#374151" font-weight="600">Learn More</text>
+
+  <!-- stats -->
+  <g font-family="Inter, sans-serif">
+    <text x="90" y="520" font-size="24" font-weight="700" fill="#16a34a">12+</text>
+    <text x="90" y="540" font-size="11" fill="#6b7280">Languages (Claude AI)</text>
+
+    <text x="240" y="520" font-size="24" font-weight="700" fill="#16a34a">6</text>
+    <text x="240" y="540" font-size="11" fill="#6b7280">Crops, verified DB</text>
+
+    <text x="370" y="520" font-size="24" font-weight="700" fill="#16a34a">&lt;5s</text>
+    <text x="370" y="540" font-size="11" fill="#6b7280">Typical response</text>
+
+    <text x="500" y="520" font-size="24" font-weight="700" fill="#16a34a">24/7</text>
+    <text x="500" y="540" font-size="11" fill="#6b7280">Availability</text>
+  </g>
+
+  <!-- right side glass chat preview -->
+  <g transform="translate(700,120)">
+    <rect width="420" height="500" rx="22" fill="#ffffff" fill-opacity="0.55" stroke="#ffffff" stroke-width="1.5"/>
+    <rect width="420" height="60" rx="22" fill="#ffffff" fill-opacity="0.4"/>
+    <circle cx="34" cy="30" r="14" fill="#16a34a"/>
+    <text x="58" y="26" font-size="12" font-weight="600" fill="#111827">Krishak Mitra</text>
+    <circle cx="60" cy="40" r="3" fill="#22c55e"/>
+    <text x="68" y="44" font-size="10" fill="#6b7280">Online</text>
+
+    <rect x="20" y="76" width="280" height="58" rx="16" fill="#ffffff" fill-opacity="0.7"/>
+    <text x="34" y="98" font-size="11" fill="#374151">Namaste! Main Krishak Mitra</text>
+    <text x="34" y="114" font-size="11" fill="#374151">hoon. Apni fasal ki samasya</text>
+
+    <rect x="120" y="148" width="280" height="46" rx="16" fill="url(#btn)"/>
+    <text x="136" y="168" font-size="11" fill="#ffffff">Mere dhan ke patte pe kaale</text>
+    <text x="136" y="184" font-size="11" fill="#ffffff">dhabbe pad rahe hain</text>
+
+    <rect x="20" y="208" width="320" height="120" rx="16" fill="#ffffff" fill-opacity="0.7"/>
+    <text x="34" y="230" font-size="11" fill="#374151" font-weight="600">🌾 Mumkin samasya: Blast (झुलसा रोग)</text>
+    <text x="34" y="248" font-size="10" fill="#4b5563">Lagbhag pakka — 85% confidence</text>
+    <text x="34" y="266" font-size="10" fill="#4b5563">🔴 Dawai: Tricyclazole 75% WP @ 0.6g/L</text>
+    <text x="34" y="284" font-size="10" fill="#4b5563">🌿 Sasta upaay: Neem oil 5ml/L</text>
+    <rect x="34" y="296" width="62" height="18" rx="9" fill="#dcfce7"/>
+    <text x="42" y="309" font-size="9" fill="#15803d">85% match</text>
+
+    <rect x="20" y="440" width="380" height="44" rx="14" fill="#ffffff" fill-opacity="0.6" stroke="#d1d5db"/>
+    <text x="36" y="466" font-size="11" fill="#9ca3af">Apni samasya yahan likhein...</text>
+    <circle cx="370" cy="462" r="16" fill="url(#btn)"/>
+  </g>
+
+  <text x="78" y="700" font-size="11" fill="#9ca3af">Glassmorphism · gradient mesh · framer-motion fade-ups · light/dark theme</text>
+</svg>

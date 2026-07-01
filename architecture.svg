@@ -1,0 +1,87 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" xmlns="http://www.w3.org/2000/svg" font-family="'Inter', system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1L8 5L1 9" fill="none" stroke="#16a34a" stroke-width="1.6"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="780" fill="#f8f5f0"/>
+
+  <text x="600" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#14532d">How a farmer's message becomes an answer</text>
+
+  <!-- Channel tier -->
+  <g>
+    <rect x="60" y="80" width="190" height="64" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+    <text x="155" y="106" text-anchor="middle" font-size="14" font-weight="600" fill="#14532d">WhatsApp</text>
+    <text x="155" y="125" text-anchor="middle" font-size="11" fill="#166534">Twilio · signed webhook</text>
+
+    <rect x="280" y="80" width="190" height="64" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+    <text x="375" y="106" text-anchor="middle" font-size="14" font-weight="600" fill="#14532d">Voice (IVR)</text>
+    <text x="375" y="125" text-anchor="middle" font-size="11" fill="#166534">Twilio call · DTMF / speech</text>
+
+    <rect x="500" y="80" width="190" height="64" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+    <text x="595" y="106" text-anchor="middle" font-size="14" font-weight="600" fill="#14532d">Web app</text>
+    <text x="595" y="125" text-anchor="middle" font-size="11" fill="#166534">React demo chat</text>
+
+    <rect x="720" y="80" width="190" height="64" rx="10" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+    <text x="815" y="106" text-anchor="middle" font-size="14" font-weight="600" fill="#713f12">Photo upload</text>
+    <text x="815" y="125" text-anchor="middle" font-size="11" fill="#854d0e">JPEG/PNG/WebP · 5MB cap</text>
+  </g>
+
+  <line x1="155" y1="144" x2="430" y2="200" stroke="#16a34a" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <line x1="375" y1="144" x2="450" y2="200" stroke="#16a34a" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <line x1="595" y1="144" x2="540" y2="200" stroke="#16a34a" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <line x1="815" y1="144" x2="600" y2="200" stroke="#ca8a04" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- Express gateway -->
+  <rect x="330" y="200" width="540" height="84" rx="12" fill="#ffffff" stroke="#a77a4d" stroke-width="1.4"/>
+  <text x="600" y="228" text-anchor="middle" font-size="15" font-weight="700" fill="#5c3d25">Express API gateway</text>
+  <text x="600" y="248" text-anchor="middle" font-size="11.5" fill="#6e4b2b">Helmet · CORS allowlist · identity-keyed rate limiting</text>
+  <text x="600" y="265" text-anchor="middle" font-size="11.5" fill="#6e4b2b">Twilio HMAC signature check · API key auth · SSRF-safe image fetch</text>
+
+  <line x1="600" y1="284" x2="600" y2="320" stroke="#a77a4d" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- Core service -->
+  <rect x="380" y="320" width="440" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="600" y="350" text-anchor="middle" font-size="15" font-weight="700" fill="#14532d">Krishak Mitra reasoning pipeline</text>
+  <text x="600" y="370" text-anchor="middle" font-size="11.5" fill="#166534">1. crisis-keyword screen  →  2. session memory  →  3. DiseaseDB grounding</text>
+  <text x="600" y="388" text-anchor="middle" font-size="11.5" fill="#166534">→  4. Claude vision + text call  →  5. offline rule-based fallback if no key</text>
+  <text x="600" y="406" text-anchor="middle" font-size="10.5" fill="#22c55e">services/claude.ts</text>
+
+  <!-- branches to external services -->
+  <line x1="430" y1="420" x2="200" y2="480" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="540" y1="420" x2="430" y2="480" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="420" x2="660" y2="480" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="770" y1="420" x2="900" y2="480" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- service row -->
+  <rect x="90" y="480" width="220" height="76" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="200" y="508" text-anchor="middle" font-size="13.5" font-weight="600" fill="#713f12">Anthropic Claude</text>
+  <text x="200" y="525" text-anchor="middle" font-size="11" fill="#854d0e">Vision diagnosis · 12+ languages</text>
+  <text x="200" y="541" text-anchor="middle" font-size="11" fill="#854d0e">2 retries, exponential backoff</text>
+
+  <rect x="330" y="480" width="220" height="76" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="440" y="508" text-anchor="middle" font-size="13.5" font-weight="600" fill="#713f12">OpenWeatherMap</text>
+  <text x="440" y="525" text-anchor="middle" font-size="11" fill="#854d0e">Spray-safety windows</text>
+  <text x="440" y="541" text-anchor="middle" font-size="11" fill="#854d0e">Rain / heat / wind alerts</text>
+
+  <rect x="560" y="480" width="220" height="76" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="670" y="508" text-anchor="middle" font-size="13.5" font-weight="600" fill="#713f12">AGMARKNET</text>
+  <text x="670" y="525" text-anchor="middle" font-size="11" fill="#854d0e">Govt. mandi price feed</text>
+  <text x="670" y="541" text-anchor="middle" font-size="11" fill="#854d0e">3h cache · 7-day trend job</text>
+
+  <rect x="790" y="480" width="220" height="76" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="900" y="508" text-anchor="middle" font-size="13.5" font-weight="600" fill="#713f12">OpenAI Whisper</text>
+  <text x="900" y="525" text-anchor="middle" font-size="11" fill="#854d0e">Voice-note transcription</text>
+  <text x="900" y="541" text-anchor="middle" font-size="11" fill="#854d0e">Multilingual speech-to-text</text>
+
+  <line x1="600" y1="420" x2="600" y2="640" stroke="#a77a4d" stroke-width="1.4" stroke-dasharray="3 4" marker-end="url(#arrow)"/>
+
+  <!-- data layer -->
+  <rect x="330" y="640" width="540" height="100" rx="12" fill="#ffffff" stroke="#a77a4d" stroke-width="1.4"/>
+  <text x="600" y="668" text-anchor="middle" font-size="15" font-weight="700" fill="#5c3d25">PostgreSQL via Prisma</text>
+  <text x="600" y="690" text-anchor="middle" font-size="11.5" fill="#6e4b2b">FarmerProfile · QueryLog · DiseaseDB · MarketPrice</text>
+  <text x="600" y="708" text-anchor="middle" font-size="11.5" fill="#6e4b2b">Session (multi-turn memory) · WeatherAlert · ContactMessage</text>
+  <text x="600" y="726" text-anchor="middle" font-size="10.5" fill="#a77a4d">Every external lookup is cached and logged here — nothing critical is in-memory only</text>
+
+  <text x="1080" y="760" text-anchor="end" font-size="11" fill="#8b6135">/health · /metrics — Prometheus-format, zero dependencies</text>
+</svg>

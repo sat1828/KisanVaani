@@ -1,0 +1,67 @@
+<svg width="900" height="800" viewBox="0 0 900 800" xmlns="http://www.w3.org/2000/svg" font-family="'Inter', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="chatBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="800" rx="20" fill="url(#chatBg)"/>
+
+  <!-- header -->
+  <circle cx="64" cy="56" r="20" fill="#22c55e"/>
+  <text x="64" y="62" text-anchor="middle" font-size="18" fill="#052e16">🌾</text>
+  <text x="98" y="50" font-size="16" font-weight="700" fill="#ffffff">Krishak Mitra</text>
+  <text x="98" y="68" font-size="11.5" fill="#86efac">● Live · session memory on</text>
+  <text x="830" y="58" text-anchor="end" font-size="11" fill="#bbf7d0">हिंदी ▾</text>
+  <line x1="40" y1="90" x2="860" y2="90" stroke="#ffffff" stroke-opacity="0.1"/>
+
+  <!-- assistant intro bubble -->
+  <rect x="40" y="110" width="540" height="92" rx="18" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="64" y="138" font-size="13" fill="#f0fdf4">Namaste! 🙏 Main Krishak Mitra hoon.</text>
+  <text x="64" y="158" font-size="13" fill="#f0fdf4">Apni fasal ki samasya batao — main turant madad karunga.</text>
+  <text x="64" y="184" font-size="13" fill="#f0fdf4">Kya samasya hai? Beemari, mausam, ya mandi bhav?</text>
+
+  <!-- user bubble with image -->
+  <rect x="560" y="222" width="300" height="150" rx="18" fill="#16a34a"/>
+  <rect x="580" y="240" width="100" height="76" rx="10" fill="#dcfce7"/>
+  <text x="630" y="282" text-anchor="middle" font-size="22" fill="#15803d">🌱</text>
+  <text x="694" y="258" font-size="12.5" fill="#ffffff">paddy_leaf.jpg</text>
+  <text x="694" y="278" font-size="12.5" fill="#dcfce7">Mere dhan ke patte pe</text>
+  <text x="694" y="296" font-size="12.5" fill="#dcfce7">kaale dhabbe pad rahe hain</text>
+  <text x="836" y="358" text-anchor="end" font-size="10.5" fill="#bbf7d0">10:42</text>
+
+  <!-- assistant diagnosis card -->
+  <rect x="40" y="394" width="660" height="260" rx="18" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="64" y="424" font-size="13.5" fill="#f0fdf4">🌾 Mumkin samasya: Bacterial Leaf Blight (Jeevanu Patti Jhulsa)</text>
+
+  <rect x="64" y="438" width="612" height="28" rx="8" fill="rgba(34,197,94,0.18)"/>
+  <text x="76" y="457" font-size="12" fill="#86efac">Lagbhag pakka — 80% confidence (database match)</text>
+
+  <rect x="64" y="476" width="296" height="56" rx="10" fill="rgba(239,68,68,0.12)"/>
+  <text x="76" y="496" font-size="11.5" font-weight="700" fill="#fca5a5">🔴 Dawai</text>
+  <text x="76" y="515" font-size="11" fill="#fecaca">Copper oxychloride 2.5g/L,</text>
+  <text x="76" y="529" font-size="11" fill="#fecaca">5-7 din ke antar par chhidkav</text>
+
+  <rect x="378" y="476" width="298" height="56" rx="10" fill="rgba(34,197,94,0.12)"/>
+  <text x="390" y="496" font-size="11.5" font-weight="700" fill="#86efac">🌿 Sasta upaay</text>
+  <text x="390" y="515" font-size="11" fill="#dcfce7">Neem oil chhidkav,</text>
+  <text x="390" y="529" font-size="11" fill="#dcfce7">khet ki naali saaf rakhein</text>
+
+  <text x="64" y="558" font-size="11.5" fill="#bbf7d0">✅ Aage ke liye: Beej upchar karein, sanntulit khad ka upyog karein.</text>
+  <text x="64" y="580" font-size="11" fill="#fde68a">⚠️ Dawai ka istemal karte waqt label zaroor padhein aur gloves pehnein.</text>
+
+  <rect x="64" y="598" width="612" height="34" rx="17" fill="rgba(250,204,21,0.12)" stroke="rgba(250,204,21,0.3)"/>
+  <text x="80" y="620" font-size="11.5" fill="#fde68a">🌤️ Aaj hawa 18 km/h hai — chhidkav abhi na karein, subah 6-9 try karein</text>
+
+  <text x="676" y="648" text-anchor="end" font-size="10.5" fill="#86efac">10:42 · 2.8s · grounded in DiseaseDB</text>
+
+  <!-- input bar -->
+  <rect x="40" y="690" width="780" height="64" rx="20" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="66" y="728" font-size="13" fill="#bbf7d0" opacity="0.7">Apna sawaal yahan likhein, ya 🎤 bolein...</text>
+  <circle cx="710" cy="722" r="20" fill="rgba(255,255,255,0.08)"/>
+  <text x="710" y="728" text-anchor="middle" font-size="14" fill="#dcfce7">📷</text>
+  <circle cx="760" cy="722" r="20" fill="rgba(255,255,255,0.08)"/>
+  <text x="760" y="728" text-anchor="middle" font-size="14" fill="#dcfce7">🎤</text>
+  <circle cx="810" cy="722" r="20" fill="#22c55e"/>
+  <text x="810" y="728" text-anchor="middle" font-size="14" fill="#052e16">➤</text>
+</svg>
