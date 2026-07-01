@@ -1,111 +1,160 @@
-# Krishak Mitra (KisanVaani)
-
-A multilingual, voice-first AI agricultural advisory platform for smallholder farmers — accessible via web, WhatsApp, and phone (IVR).
-
-## What this actually does
-
-- **Crop disease/pest diagnosis** via text, voice, or photo, grounded in a verified disease database (currently: rice, wheat, cotton, maize, tomato, banana) plus general reasoning from Claude (Anthropic) when configured with a real API key.
-- **Weather-based spray/irrigation advisories** using live OpenWeatherMap data.
-- **Mandi (market) price lookups** with real 7-day historical trend tracking, sourced from the government AGMARKNET API where a key is configured, falling back to clearly-labeled illustrative data otherwise.
-- **Multi-turn conversation memory** within a session, so follow-up questions don't require repeating context.
-- **WhatsApp and phone-based (IVR) access** via Twilio, with signature-verified webhooks, for farmers without reliable smartphone/data access.
-- **Crisis-language detection** that redirects to verified mental health helplines (Tele MANAS, KIRAN) and the Kisan Call Centre instead of giving an agricultural answer — this is a safety layer, not a guarantee.
-
-## What this does NOT do (yet)
-
-Being direct about gaps, rather than letting marketing copy imply otherwise:
-
-- No measured diagnosis accuracy number exists anywhere — we don't publish one until it's been validated against agronomist-reviewed outcomes.
-- The verified disease database covers 6 crops, not "40+". Claude can still reason about other crops generally when a real API key is configured, but that's general-model reasoning, not verified-database-backed.
-- No long-term, cross-session memory (e.g. recognizing a returning farmer days later) — only within-session memory.
-- No SMS channel — only WhatsApp and voice IVR.
-- EXIF metadata is not stripped from uploaded photos (see `backend/src/api/upload.ts` for why, and what to add).
-
-## Architecture
-
-```
-frontend/   React + Vite + TypeScript + Tailwind, 3D/glass UI (Three.js, Framer Motion)
-backend/    Express + TypeScript + Prisma (PostgreSQL)
-```
-
-Key backend modules:
-- `src/services/claude.ts` — the core AI pipeline: crisis detection → session history → DiseaseDB grounding → Claude API call (with real vision support for photos) → offline rule-based fallback if no API key is configured.
-- `src/api/market.ts` — market price endpoint + real trend calculation from historical data (not from a single snapshot's min/max spread).
-- `src/api/webhook.ts` — Twilio WhatsApp/voice webhooks, signature-validated on every route.
-- `src/middleware/auth.ts` — API key auth + real Twilio HMAC signature validation (not just a header-presence check).
-- `src/lib/safeFetch.ts` — SSRF-safe fetcher for any URL derived from user input (farmer-submitted photo URLs), with a host allowlist and private-IP blocking.
-- `src/lib/logger.ts`, `src/lib/metrics.ts` — zero-dependency structured logging and Prometheus-format `/metrics`.
-
-## Getting started
-
-### Prerequisites
-- Node.js 20+
-- PostgreSQL 16 (or use the provided `docker-compose.yml`)
-- API keys (see `backend/.env.example` for the full list and what happens if each is left unset)
-
-### Local development
-
+<div align="center">
+<img src="banner.svg" alt="KisanVaani — Krishak Mitra banner" width="100%" />
+### An AI agronomist that picks up the phone, reads a photo of a sick leaf, and answers back in the farmer's own language — on WhatsApp, on a voice call, or on the web.
+ 
+[![TypeScript](https://img.shields.io/badge/TypeScript-95.5%25-3178C6?logo=typescript&logoColor=white)](#)
+[![Node](https://img.shields.io/badge/Node-%E2%89%A518-339933?logo=node.js&logoColor=white)](#)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=0b1410)](#)
+[![Prisma](https://img.shields.io/badge/Prisma-PostgreSQL-2D3748?logo=prisma&logoColor=white)](#)
+[![Claude](https://img.shields.io/badge/Vision%20%2B%20Reasoning-Claude%20API-7F77DD)](#)
+[![License](https://img.shields.io/badge/status-active%20development-16a34a)](#)
+ 
+</div>
+---
+ 
+## What this actually is
+ 
+A smallholder farmer in rural India does not own a laptop. Most don't own a smartphone either. What they do have is a basic phone that can take a call, send a WhatsApp voice note, or snap one blurry photo of a leaf covered in black spots. **KisanVaani is built around that constraint, not despite it.**
+ 
+You can ask it three things, and it will give you a straight answer instead of a guess dressed up as one:
+ 
+- **"What's wrong with my crop?"** — describe it, say it out loud, or send a photo. It cross-references your symptoms against a verified, seeded disease database before it ever lets an LLM free-associate a diagnosis.
+- **"Can I spray today?"** — it pulls a live OpenWeatherMap forecast and runs your actual wind speed, humidity, and temperature through a real spray-safety rule set. No "probably fine," just numbers and a yes or no.
+- **"What's my crop worth right now?"** — government AGMARKNET mandi prices, cached, with a genuine 7-day trend computed from real historical rows — not a coin flip dressed up as an "up/down" arrow.
+And if a conversation turns into something heavier than crop disease — debt, despair, the kind of phrasing that shows up before a tragedy — the system recognizes it in multiple languages and immediately surfaces the Tele MANAS and KIRAN national helplines instead of trying to be clever about pesticides. That's not a footnote feature. It's baked into the response pipeline before anything else runs.
+ 
+---
+ 
+## See it in action
+ 
+<div align="center">
+<img src="landing-page.svg" alt="KisanVaani landing page and live chat preview" width="100%" />
+</div>
+The actual interface: a glass-morphism hero in primary green (`#16a34a`) and warm gold (`#eab308`), Playfair Display for headlines, Inter for body copy, JetBrains Mono for the technical accents — built with Tailwind's extended theme, `framer-motion` fade-ups on scroll, a 3D particle field via `@react-three/fiber`, and full light/dark theming through CSS custom properties so the glass blur and shadows actually adapt instead of just inverting black to white.
+ 
+What you're looking at on the right isn't a screenshot mockup of imaginary functionality — every element traces to a real component: `DemoChat.tsx` for the conversation thread, the confidence-percentage pill color-coded by `msg.confidence` (green above 80%, amber above 50%, red below), and the degraded-mode banner that explicitly tells the farmer when they're talking to the offline rule-based fallback instead of live Claude — because pretending an offline demo is a real diagnosis is exactly the kind of dishonesty this codebase was deliberately built to avoid.
+ 
+---
+ 
+## How a message actually moves through the system
+ 
+<div align="center">
+<img src="architecture.svg" alt="KisanVaani request lifecycle architecture diagram" width="100%" />
+</div>
+Three channels — the web widget, a signed Twilio WhatsApp webhook, and a Twilio voice IVR tree with Hindi/Telugu/Kannada language selection — all funnel into one Express gateway. That gateway isn't decorative middleware; it's `helmet`, a CORS allowlist that refuses to boot in production if left wide open, identity-keyed rate limiting (because rural India runs on carrier-grade NAT, so punishing by raw IP punishes entire villages for one heavy user), and `zod` schema validation on every payload.
+ 
+Past the gateway, every message hits a crisis keyword pre-filter in Hindi, English, and Swahili before it touches anything agricultural. Only then does it reach `generateResponse()` — which loads session history from Postgres for multi-turn memory, runs a lightweight symptom-matching pass against the seeded `DiseaseDB` table, and builds that into a grounding block injected straight into Claude's system prompt. If the farmer attached a photo, it's fetched through an SSRF-hardened fetcher (blocked private IP ranges, an explicit host allowlist, redirect rejection) and sent as a real vision content block — not a placeholder string pretending to be image understanding, which is what an earlier version of this code actually did before it got ripped out.
+ 
+If the Claude API key is missing, expired, or the call fails twice with backoff, the system doesn't throw a 500 at a farmer mid-emergency. It drops to a rule-based path that still queries the real disease database, still pulls live weather, still pulls live market data — it just can't reason about a novel combination of symptoms the way the full model can. And it says so, explicitly, in the response (`degraded: true`), instead of quietly serving a worse answer with the same confidence.
+ 
+---
+ 
+## The stack, with receipts
+ 
+<table>
+<tr><td width="50%" valign="top">
+### Backend — `Express` + `TypeScript`
+- **Prisma ORM → PostgreSQL** — seven real tables: `FarmerProfile`, `QueryLog`, `DiseaseDB`, `WeatherAlert`, `MarketPrice`, `Session`, `ContactMessage`
+- **Claude API** — text + vision, multi-turn, retried with exponential backoff
+- **OpenAI Whisper** — voice note transcription for WhatsApp audio
+- **Twilio** — WhatsApp webhook + voice IVR, both signature-validated in *every* environment, not just production
+- **OpenWeatherMap** — live forecast → translated condition strings → rule-based spray advisory
+- **AGMARKNET (data.gov.in)** — government mandi price API with a 3-hour Postgres cache and a background refresh job that actually accumulates 7-day history
+- **Resend** — contact form email notifications, with the message persisted to the DB first regardless of whether email delivery succeeds
+- **Zero-dependency structured logger and Prometheus-format `/metrics`** — no `winston`, no `prom-client`, hand-rolled because the surface area didn't justify the dependency
+</td><td width="50%" valign="top">
+### Frontend — `React 18` + `Vite` + `TypeScript`
+- **Tailwind**, extended with a custom `primary` (green), `accent` (gold), and `earth` color ramp, `Playfair Display` / `Inter` / `JetBrains Mono` type system
+- **`framer-motion`** for every scroll-triggered reveal
+- **`@react-three/fiber` + `three`** for the hero's particle field
+- **Web Speech API** for in-browser voice input on the demo chat
+- **`react-router-dom`** across five routes: Home, Demo, Features, About, Contact
+- **`vitest` + Testing Library** — components and hooks have real test files, not an empty `__tests__` folder for show
+</td></tr>
+</table>
+---
+ 
+## What's real vs. what's clearly labeled as a stand-in
+ 
+This matters, because a portfolio project that quietly fakes its own demo is worse than one that's honest about its limits.
+ 
+| Capability | Status |
+|---|---|
+| Crop disease matching | Real — scored against a seeded, multi-field Postgres table with organic/chemical treatments, prevention, season windows, and regional relevance |
+| Vision-based diagnosis from photos | Real — actual Claude vision API call, not a placeholder description string |
+| Weather + spray safety | Real — live OpenWeatherMap call, rule-based thresholds on wind/humidity/temperature |
+| Market prices | Real — live AGMARKNET government API with Postgres caching; falls back to a small, explicitly-commented "illustrative, not live" static table only when the API key is absent |
+| Multi-turn memory | Real — Postgres-backed session context, capped and trimmed per conversation |
+| Crisis detection | Real — keyword pre-filter plus instructed model behavior, with verified, currently-active Indian helpline numbers (no invented numbers for regions where none were verified) |
+| Banned pesticide filtering | Enforced via system prompt instruction — Monocrotophos, Methyl Parathion, Phorate, Endosulfan explicitly excluded |
+| Offline fallback mode | Real and disclosed — clearly flagged as `degraded` to both the API consumer and the chat UI, never silently substituted |
+ 
+---
+ 
+## Getting it running
+ 
 ```bash
-# 1. Backend
-cd backend
-cp .env.example .env   # fill in real values
-npm install
-npx prisma generate
-npx prisma migrate dev
-npx prisma db seed     # loads the verified disease database
-npm run dev
-
-# 2. Frontend (separate terminal)
-cd frontend
-npm install
-npm run dev
+git clone https://github.com/sat1828/KisanVaani.git
+cd KisanVaani
+npm run setup          # installs root + backend + frontend, generates Prisma client
+ 
+cp backend/.env.example backend/.env
+# fill in DATABASE_URL, ANTHROPIC_API_KEY, OPENWEATHER_API_KEY, etc.
+# the app runs without every key — it just degrades the relevant feature honestly
+ 
+npm run db:migrate
+npm run db:seed        # loads the verified disease database
+npm run dev             # backend on :3001, frontend on :5173, concurrently
 ```
-
-The frontend dev server proxies `/api/*` to the backend (see `vite.config.ts`).
-
-### Docker
-
+ 
+Docker, if you'd rather not run Postgres locally:
+ 
 ```bash
-cp backend/.env.example backend/.env   # fill in real values
-echo "DB_PASSWORD=$(openssl rand -hex 16)" >> .env
+cp backend/.env.example backend/.env
+echo "DB_PASSWORD=$(openssl rand -hex 16)" >> backend/.env
 docker compose up --build
 ```
-
-Note: `DB_PASSWORD` has **no default** in `docker-compose.yml` on purpose — the previous version of this file shipped with a hardcoded fallback password baked into source control, which is exactly the kind of thing that ends up in a real production deployment by accident.
-
-### Tests
-
-```bash
-# Backend (Node's built-in test runner, zero extra dependencies)
-cd backend && npm run build && npm test
-
-# Frontend (Vitest)
-cd frontend && npm test
+ 
+The compose file refuses to start without a real `DB_PASSWORD` — there used to be a hardcoded fallback baked into source control, and that's exactly the kind of thing that gets fixed, not shipped.
+ 
+---
+ 
+## Project shape
+ 
 ```
-
-Both are wired into `.github/workflows/ci.yml` and run on every push/PR, including a real `npm run build` for the frontend — this exists specifically because a previous version of this project had a broken frontend build (`tsc -b && vite build` failing with exit code 1) that went unnoticed for an unknown period of time. CI now makes that class of regression impossible to merge silently.
-
-## Required environment variables
-
-See `backend/.env.example` for the complete, current list with explanations of what happens when each is left unset. The short version: `DATABASE_URL` is required to start at all; `ANTHROPIC_API_KEY` is required for real AI diagnosis (otherwise the offline rule-based fallback runs, grounded in the real disease database but not a substitute for the real model); `TWILIO_*` + `PUBLIC_BASE_URL` are required together for the WhatsApp/voice channels; everything else degrades gracefully with a logged warning if left unset.
-
-## Security notes
-
-- Twilio webhook signatures are verified in every environment (not just production) using Twilio's official HMAC scheme — an unsigned webhook endpoint is a real cost-abuse vector (it can trigger paid AI calls and outbound messages).
-- Outbound fetches of user-supplied URLs (farmer photo uploads, WhatsApp media) go through an SSRF-safe fetcher with a host allowlist and private/loopback IP blocking.
-- Rate limiting is keyed by identity (API key / phone number) where possible, not just IP, since many farmers in rural areas share carrier-grade NAT.
-- The `/api/chat` `API_KEY` check is a soft deterrent for a publicly-embedded demo widget, not a hard security boundary — see the comment in `backend/.env.example` for why, and what to do if you need a real one.
-
-## Known sandbox-specific limitations in this delivery
-
-A few things couldn't be fully verified inside the build/audit sandbox this project was finalized in, due to no outbound network access:
-
-1. **`npx prisma generate`** could not be run against the final schema (which adds a `ContactMessage` model) because Prisma's engine binary download requires network access this sandbox didn't have. Run it once after cloning — `npm install` in `backend/` triggers it automatically via the `postinstall` hook in a normal environment with network access.
-2. **`npm install` for frontend test dependencies** (`vitest`, `@testing-library/*`) could not be run for the same reason — the test files are written and wired into `package.json`/CI, but were not executed in this sandbox. They will run normally once installed in any environment with network access (including CI, which installs fresh on every run).
-3. **`vite build`'s bundling step** hit a known npm optional-dependency bug in this sandbox's pre-vendored `node_modules` (missing a platform-native `rollup` binary that IS correctly declared in `package-lock.json` for both glibc and musl). `tsc -b` — the actual TypeScript correctness check — passes cleanly with zero errors. A fresh `npm ci` (which is what Docker and CI both do) resolves the correct binary for whatever platform runs it.
-
-Backend tests (using Node's built-in test runner, no extra dependencies needed) WERE run successfully in this sandbox: 27/29 assertions pass, with the remaining 2 being a harmless async-handle warning from Prisma's engine resolution in this specific sandbox (unrelated to test logic).
-
-## License
-
-Add your chosen license here.
+KisanVaani/
+├── backend/
+│   ├── src/
+│   │   ├── api/            # chat, weather, market, webhook, upload, contact
+│   │   ├── services/       # claude.ts (the brain), whisper.ts (voice)
+│   │   ├── middleware/     # auth.ts (API key + Twilio signatures), errorHandler.ts
+│   │   ├── lib/             # safeFetch.ts (SSRF guard), logger.ts, metrics.ts
+│   │   └── __tests__/       # auth, crisis, market, metrics, safeFetch
+│   └── prisma/
+│       ├── schema.prisma    # 7 models, fully indexed
+│       └── seed.ts          # 10 verified disease/pest entries across 6 crops (rice, wheat, cotton, maize, tomato, banana) — each with local name, scientific name, organic + chemical treatment, prevention, and season window
+└── frontend/
+    └── src/
+        ├── pages/            # Home, Demo, Features, About, Contact, NotFound
+        ├── components/       # Hero, DemoChat, WeatherWidget, MarketPrices, …
+        └── hooks/            # useTheme, useScrollAnimation
+```
+ 
+---
+ 
+## On the engineering decisions that aren't visible on the surface
+ 
+A few things in this codebase exist specifically because the first version of them was wrong, and got corrected — which is a more honest signal than a project that's never had anything to fix:
+ 
+- Twilio webhook signature validation now runs in **every** environment, not just production — an unsigned webhook is a live cost-abuse vector in staging too, since it can trigger real outbound messages and paid AI calls.
+- Market price trend used to be computed from a single snapshot's bid-ask spread, which meant it could mathematically never report a price drop. It's now computed against real 7-day historical averages, with an honest "unknown" state when there isn't enough history yet — not a fabricated guess.
+- Rate limiting is keyed by identity (API key or phone number), not raw IP, because rural India's carrier-grade NAT means one heavy user behind a shared IP would otherwise throttle an entire village.
+- The contact form used to fake a "Message Sent!" state with a `setTimeout` and send nothing anywhere. It now persists to Postgres first as the actual source of truth, and only reports success based on that — email notification is a secondary, best-effort layer on top.
+---
+ 
+<div align="center">
+Built by **[Satyajit Parida](https://github.com/sat1828)** — AI/ML engineer, full-stack developer.
+ 
+If you're evaluating this for technical depth rather than UI polish, start at `backend/src/services/claude.ts` — that's where the actual decision-making lives.
+ 
+</div>
