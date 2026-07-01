@@ -49,30 +49,20 @@ If the Claude API key is missing, expired, or the call fails twice with backoff,
  
 ---
  
-## The stack, with receipts
+## What's behind the chat window
  
-<table>
-<tr><td width="50%" valign="top">
-### Backend — `Express` + `TypeScript`
-- **Prisma ORM → PostgreSQL** — seven real tables: `FarmerProfile`, `QueryLog`, `DiseaseDB`, `WeatherAlert`, `MarketPrice`, `Session`, `ContactMessage`
-- **Claude API** — text + vision, multi-turn, retried with exponential backoff
-- **OpenAI Whisper** — voice note transcription for WhatsApp audio
-- **Twilio** — WhatsApp webhook + voice IVR, both signature-validated in *every* environment, not just production
-- **OpenWeatherMap** — live forecast → translated condition strings → rule-based spray advisory
-- **AGMARKNET (data.gov.in)** — government mandi price API with a 3-hour Postgres cache and a background refresh job that actually accumulates 7-day history
-- **Resend** — contact form email notifications, with the message persisted to the DB first regardless of whether email delivery succeeds
-- **Zero-dependency structured logger and Prometheus-format `/metrics`** — no `winston`, no `prom-client`, hand-rolled because the surface area didn't justify the dependency
-</td><td width="50%" valign="top">
-### Frontend — `React 18` + `Vite` + `TypeScript`
-- **Tailwind**, extended with a custom `primary` (green), `accent` (gold), and `earth` color ramp, `Playfair Display` / `Inter` / `JetBrains Mono` type system
-- **`framer-motion`** for every scroll-triggered reveal
-- **`@react-three/fiber` + `three`** for the hero's particle field
-- **Web Speech API** for in-browser voice input on the demo chat
-- **`react-router-dom`** across five routes: Home, Demo, Features, About, Contact
-- **`vitest` + Testing Library** — components and hooks have real test files, not an empty `__tests__` folder for show
-</td></tr>
-</table>
----
+<p align="center"><img src="./assets/screenshot-chat.svg" alt="Live demo chat" width="80%" /></p>
+## Stack
+ 
+```
+frontend/   React 18 · TypeScript · Vite · Tailwind · Framer Motion · React Three Fiber
+            Glassmorphic UI, dark mode, 3D particle field on the hero, Vitest + Testing Library
+ 
+backend/    Express 4 · TypeScript · Prisma · PostgreSQL · Zod validation
+            Twilio (WhatsApp + voice IVR) · Anthropic Claude (text + vision)
+            OpenWeatherMap · AGMARKNET · OpenAI Whisper (voice transcription)
+            node --test for backend unit tests, Docker + nginx for deployment
+```
  
 ## What's real vs. what's clearly labeled as a stand-in
  
