@@ -51,7 +51,7 @@ If the Claude API key is missing, expired, or the call fails twice with backoff,
  
 ## What's behind the chat window
  
-<p align="center"><img src="./assets/screenshot-chat.svg" alt="Live demo chat" width="80%" /></p>
+<p align="center"><img src="./screenshot-chat.svg" alt="Live demo chat" width="80%" /></p>
 ## Stack
  
 ```
